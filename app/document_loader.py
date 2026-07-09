@@ -2,11 +2,11 @@ from pathlib import Path
 from typing import List
 
 import pandas as pd
-from langchain.schema import Document
+from langchain_classic.schema import Document
 from langchain_community.document_loaders import PyPDFLoader
 
 
-def load_documents(file_paths: List[Path]) -> List[Document]:
+def cargar_documentos(file_paths: List[Path]) -> List[Document]:
     """
     Carga los documentos desde el path de archivos definido.
 
@@ -33,7 +33,7 @@ def load_documents(file_paths: List[Path]) -> List[Document]:
     return documents
 
 
-def load_pdf(file_path: str) -> List[Document]:
+def cargar_pdf(file_path: str) -> List[Document]:
     """
     Lee archivos en formato PDF página por página y devuelve documentos LangChain.
     """
@@ -41,7 +41,7 @@ def load_pdf(file_path: str) -> List[Document]:
     return loader.load()
 
 
-def load_csv(file_path: str) -> List[Document]:
+def cargar_csv(file_path: str) -> List[Document]:
     """
     Lee los archivos en formato CSV y convierte cada fila en un Document.
     """
