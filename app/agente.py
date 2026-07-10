@@ -5,10 +5,9 @@ from typing import Any
 from langchain_classic.chains import RetrievalQA
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
-from langchain_core.output_parsers import StrOutputParser
 
 from document_loader import cargar_documentos
-from vector_store import construir_vector_store
+from vector_store import obtener_crear_vector_store
 
 from config import settings
 
@@ -22,14 +21,17 @@ def crear_agente() -> RetrievalQA:
         3. Crear un índice vectorial FAISS.
         4. Conectar el agente con un retriever para responder preguntas.
     """
-    documentos = cargar_documentos([Path(settings.data_path)])
-    vector_store = construir_vector_store(documentos)
+
+    file_path = [Path(settings.data_path)]
+
+    documentos = cargar_documentos(file_path)
+    vector_store = obtener_crear_vector_store(file_path, documentos)
     retriever = vector_store.as_retriever(search_kwargs={"k": 4})
 
     # llm utilizando Groq para la generación de respuestas
     llm = ChatGroq(
         model = settings.groq_model,
-        temperature=0,
+        temperature = 0,
         groq_api_key = settings.groq_api_key,
     )   
 
