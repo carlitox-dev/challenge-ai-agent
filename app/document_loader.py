@@ -2,9 +2,9 @@ from pathlib import Path
 from typing import List
 
 import pandas as pd
+
 from langchain_classic.schema import Document
 from langchain_community.document_loaders import PyPDFLoader
-
 
 def cargar_documentos(file_paths: List[Path]) -> List[Document]:
     """
@@ -29,7 +29,7 @@ def cargar_documentos(file_paths: List[Path]) -> List[Document]:
                 metadata = {"source": str(file_path)}
                 documents.append(Document(page_content=content, metadata=metadata))
         else:
-            raise ValueError(f"Unsupported file type: {file_path.suffix}")
+            raise ValueError(f"Tipo de archivo no soportado: {file_path.suffix}")
     return documents
 
 
