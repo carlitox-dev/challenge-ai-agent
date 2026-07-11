@@ -22,9 +22,9 @@ def crear_agente() -> RetrievalQA:
         4. Conectar el agente con un retriever para responder preguntas.
     """
 
-    file_path = [Path(settings.data_path)]
+    file_path = settings.file_path
 
-    documentos = cargar_documentos(file_path)
+    documentos = cargar_documentos([Path(file_path)])
     vector_store = obtener_crear_vector_store(file_path, documentos)
     retriever = vector_store.as_retriever(search_kwargs={"k": 4})
 

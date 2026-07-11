@@ -17,6 +17,7 @@ class Settings:
     groq_model: str | None = os.getenv("GROQ_MODEL")
     groq_embedding_model: str | None = os.getenv("GROQ_EMBEDDING_MODEL")
 
+    file_path: str | None = os.getenv("FILE_PATH")
     data_path: str | None = os.getenv("DATA_PATH")
     vector_dir: str | None = os.getenv("VECTOR_DIR")
 
