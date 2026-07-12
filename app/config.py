@@ -17,13 +17,10 @@ class Settings:
     groq_model: str | None = os.getenv("GROQ_MODEL")
     groq_embedding_model: str | None = os.getenv("GROQ_EMBEDDING_MODEL")
 
-    file_path: str | None = os.getenv("FILE_PATH")
-    data_path: str | None = os.getenv("DATA_PATH")
-    vector_dir: str | None = os.getenv("VECTOR_DIR")
+    file_path: str = 'data/documento.pdf'
+    data_path: str = 'data'
+    vector_dir: str ='vectorstore'
 
     chunk_size: int = int(os.getenv("CHUNK_SIZE", "1000"))
-
-    # =========================
-    # config OCI // ToDo
 
 settings = Settings()
