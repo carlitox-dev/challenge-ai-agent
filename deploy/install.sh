@@ -3,7 +3,7 @@
 # Ejecutar como usuario con permisos sudo (por ejemplo "opc" en Oracle Linux).
 set -euo pipefail
 
-APP_DIR="/home/opc/challenge-ai-agent"
+APP_DIR="/opt/challenge-ai-agent"
 SERVICE_NAME="challenge-ai-agent"
 
 echo "==> Creando entorno virtual e instalando dependencias Python"
