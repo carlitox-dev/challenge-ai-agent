@@ -1,0 +1,24 @@
+[Unit]
+Description=Agente Inteligente Documental (challenge-ai-agent)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=opc
+Group=opc
+WorkingDirectory=/opt/challenge-ai-agent/app
+EnvironmentFile=-/opt/challenge-ai-agent/.env
+ExecStart=/opt/challenge-ai-agent/venv/bin/python /opt/challenge-ai-agent/app/main.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=challenge-ai-agent
+
+# Endurecimiento básico del servicio
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
