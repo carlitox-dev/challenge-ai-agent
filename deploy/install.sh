@@ -14,7 +14,7 @@ python3.12 -m venv "${APP_DIR}/venv"
 if [ ! -f "${APP_DIR}/.env" ]; then
     echo "==> No se encontró ${APP_DIR}/.env, creando uno a partir de .env.ejemplo"
     cp "${APP_DIR}/.env.ejemplo" "${APP_DIR}/.env"
-    echo "    -> Editá ${APP_DIR}/.env y completá los *_OCID de cada secreto en OCI Vault."
+    echo "    -> Editá ${APP_DIR}/.env y completá las variables de entorno.
 fi
 
 echo "==> Instalando el servicio systemd"

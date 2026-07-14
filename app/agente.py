@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Any
 
 from langchain_classic.chains import RetrievalQA
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 
 from document_loader import cargar_documentos
@@ -30,23 +29,16 @@ def crear_agente() -> RetrievalQA:
 
     # llm utilizando Groq para la generación de respuestas
     llm = ChatGroq(
-        model = settings.groq_model,
-        temperature = 0,
-        groq_api_key = settings.groq_api_key,
+        model=settings.groq_model,
+        temperature=0,
+        groq_api_key=settings.groq_api_key,
     )   
 
-    # llm utilizando GoogleGenerativeAI para la generación de respuestas
-    llm_2 = ChatGoogleGenerativeAI(
-        model = settings.gemini_model,
-        temperature = 0,
-        google_api_key = settings.gemini_api_key,
-    )
-
     return RetrievalQA.from_chain_type(
-        llm = llm,
-        chain_type = "stuff",
-        retriever = retriever,
-        return_source_documents = True,
+        llm=llm,
+        chain_type="stuff",
+        retriever=retriever,
+        return_source_documents=True,
     )
 
 def preguntar_agente(agent: RetrievalQA, question: str) -> dict[str, Any]:

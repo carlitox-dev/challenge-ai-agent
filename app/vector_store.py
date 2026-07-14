@@ -5,7 +5,7 @@ from pathlib import Path
 from langchain_classic.schema import Document
 from langchain_classic.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 from config import settings
 
@@ -22,6 +22,7 @@ def dividir_documentos(documents: List[Document]) -> List[Document]:
     )
     return splitter.split_documents(documents)
 
+
 def construir_vector_store(documents: List[Document]) -> FAISS:
     """
     Crea un índice vectorial FAISS para búsqueda semántica de la información 
@@ -32,14 +33,14 @@ def construir_vector_store(documents: List[Document]) -> FAISS:
     return FAISS.from_documents(chunks, embeddings)
 
 
-def get_embeddings() -> GoogleGenerativeAIEmbeddings:
+def get_embeddings() -> HuggingFaceEmbeddings:
     """
     Crea el objeto de embeddings usando variables de entorno.
     """
-    embedding_model = settings.gemini_embedding_model
-    return GoogleGenerativeAIEmbeddings(
-        model = embedding_model,
-        google_api_key = settings.gemini_api_key,
+    return HuggingFaceEmbeddings(
+        model_name=settings.embedding_model,
+        model_kwargs={"device": settings.embedding_device},
+        encode_kwargs={"normalize_embeddings": settings.embedding_normalize},
     )
 
 
@@ -51,13 +52,13 @@ def get_index_path(file_path: str) -> Path:
     return INDEX_BASE_DIR / source_name
 
 
-
 def guardar_vector_store(vector_store: FAISS, index_path: Path) -> None:
     """
     Guarda el índice FAISS en disco para ser reutilizado luego.
     """
     index_path.mkdir(parents=True, exist_ok=True)
     vector_store.save_local(str(index_path))
+
 
 def cargar_vector_store(index_path: Path) -> FAISS:
     """
