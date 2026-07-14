@@ -1,9 +1,6 @@
 """
 Archivo de configuración de la aplicación
 """
-"""
-Archivo de configuración de la aplicación
-"""
 
 import os
 from dotenv import load_dotenv

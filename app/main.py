@@ -18,9 +18,12 @@ def main() -> None:
 
     agente = crear_agente()
     respuesta = preguntar_agente(agente, args.question)
-    
+
     print(json.dumps(respuesta, ensure_ascii=False, indent=2))
 
 
+def main_agente() -> None:
+    interfaz.launch(server_name="0.0.0.0", server_port=7860)
+
 if __name__ == "__main__":
-    interfaz.launch(server_name="0.0.0.0", server_port=8080)
+    main_agente()

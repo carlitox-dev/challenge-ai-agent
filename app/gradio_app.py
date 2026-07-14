@@ -61,12 +61,12 @@ def limpiar_chat() -> tuple[list, list]:
     return [], []
 
 with gr.Blocks(title="Agente Inteligente Documental") as interfaz:
-    
+
     gr.Markdown("# Agente Inteligente Documental")
-    gr.Markdown("Hola! Soy _**Poli**_, tu Asistente con Inteligencia Artificial. 🤖")
+    gr.Markdown("Hola! Soy _**Poli**_, tu Asistente con Inteligencia Artificial. 🤖 ")
     gr.Markdown("Puedo ayudarte a resolver cualquier duda sobre la documentación de _Onboarding para Nuevos Desarrolladores_, " \
     "como: estructura del equipo, beneficios, configuración de entornos, políticas de seguridad y más.")
-    gr.Markdown("¿Qué qué te gustaría consultar? 🤔❓")
+    gr.Markdown("¿Qué qué te gustaría consultar? 🤔 ❓ ")
 
     cargar_agente()
 

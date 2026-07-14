@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from typing import Any
 
@@ -9,6 +8,15 @@ from document_loader import cargar_documentos
 from vector_store import obtener_crear_vector_store
 
 from config import settings
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+def resolver_file_path() -> Path:
+    candidate = Path(settings.file_path)
+    if candidate.is_absolute():
+        return candidate
+
+    return (BASE_DIR / candidate).resolve()
 
 def crear_agente() -> RetrievalQA:
     """
@@ -21,10 +29,16 @@ def crear_agente() -> RetrievalQA:
         4. Conectar el agente con un retriever para responder preguntas.
     """
 
-    file_path = settings.file_path
+    file_path = resolver_file_path()
+    #file_path = settings.file_path
 
-    documentos = cargar_documentos([Path(file_path)])
-    vector_store = obtener_crear_vector_store(file_path, documentos)
+    if not file_path.exists():
+        raise FileNotFoundError(f"No existe el archivo de entrada: {file_path}")
+
+    documentos = cargar_documentos([file_path])
+    #documentos = cargar_documentos([Path(file_path)])
+    #vector_store = obtener_crear_vector_store(file_path, documentos)
+    vector_store = obtener_crear_vector_store(str(file_path), documentos)
     retriever = vector_store.as_retriever(search_kwargs={"k": 4})
 
     # llm utilizando Groq para la generación de respuestas
@@ -32,7 +46,7 @@ def crear_agente() -> RetrievalQA:
         model=settings.groq_model,
         temperature=0,
         groq_api_key=settings.groq_api_key,
-    )   
+    )
 
     return RetrievalQA.from_chain_type(
         llm=llm,
@@ -51,7 +65,7 @@ def preguntar_agente(agent: RetrievalQA, question: str) -> dict[str, Any]:
     Returns:
         dict[str, Any]: Diccionario con la respuesta y las fuentes de los documentos consultados.
     """
-   
+
     resultado = agent.invoke({"query": question})
     fuente_documentos = resultado.get("source_documents", [])
     fuentes_formateadas = []
