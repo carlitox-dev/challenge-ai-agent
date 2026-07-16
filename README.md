@@ -1,5 +1,4 @@
 
-
 # 🤖 Poli — Agente Inteligente Documental
 
 ### Agente conversacional basado en RAG (*Retrieval-Augmented Generation*) para realizar consultas en lenguaje natural.
@@ -26,14 +25,15 @@ El agente recupera fragmentos relevantes del documento fuente y genera respuesta
 
 1. [Descripción general](#descripción-general)
 2. [Arquitectura de la solución](#arquitectura-de-la-solución)
-3. [Tecnologías y herramientas](#tecnologías-y-herramientas)
-4. [Instrucciones de instalación y ejecución](#instrucciones-de-instalación-y-ejecución)
-5. [Despliegue en OCI](#despliegue-en-oci)
-6. [Ejemplos de preguntas y respuestas](#ejemplos-de-preguntas-y-respuestas)
+3. [Estructura del proyecto](#estructura-del-proyecto)
+4. [Tecnologías y herramientas](#tecnologías-y-herramientas)
+5. [Instrucciones de instalación y ejecución](#instrucciones-de-instalación-y-ejecución)
+6. [Despliegue en OCI](#despliegue-en-oci)
+7. [Ejemplos de preguntas y respuestas](#ejemplos-de-preguntas-y-respuestas)
 
 
 
-## 👁️‍🗨️ Descripción general
+## ✨ Descripción general
 
 **Poli** es un asistente virtual especializado en la documentación de onboarding de Santo Pegasus Soluciones. 
 
@@ -59,7 +59,7 @@ El agente procesa el documento fuente una única vez, construye un índice vecto
                         ▼
 ┌─────────────────────────────────────────────────────┐
 │                  Interfaz Gradio                    │
-│              (gradio\_app.py · puerto 7860)          │
+│              (gradio_app.py · puerto 7860)          │
 └────────────────────────┬────────────────────────────┘
                          │ pregunta
                          ▼
@@ -77,12 +77,12 @@ El agente procesa el documento fuente una única vez, construye un índice vecto
             ▼                         ▼
 ┌─────────────────────┐   ┌────────────────────────────┐
 │  Carga de documentos│   │    Vector Store (FAISS)    │
-│  (document\_loader) │   │    (vector\_store.py)      │
+│  (document_loader)  │   │    (vector_store.py)       │
 │                     │   │                            │
 │  PyPDFLoader (PDF)  │   │  HuggingFace Embeddings    │
 │  pandas (CSV)       │   │  all-MiniLM-L6-v2          │
 └─────────────────────┘   │  Persistido en:            │
-                          │  storage/vector\_index/    │
+                          │  storage/vector_index/     │
                           └────────────────────────────┘
                                        │
                                        ▼
@@ -99,13 +99,61 @@ Inicio
   │
   ├─► ¿Existe índice vectorial en disco?
   │     │
-  │    Sí ──────► Cargar FAISS desde storage/vector\_index/
+  │    Sí ──────► Cargar FAISS desde storage/vector_index/
   │    No ──────► Cargar PDF/CSV → Chunking → Embeddings → Crear y guardar índice
   │
   └─► Retriever recupera top-4 chunks relevantes
         │
         └─► LLM genera respuesta con contexto → Usuario
 ```
+
+## 📁 Estructura del proyecto
+
+```
+challenge-ai-agent/
+│
+├── app/                          # Código fuente principal
+│   ├── main.py                   # Punto de entrada; lanza la interfaz Gradio
+│   ├── agente.py                 # Construcción del agente RAG (RetrievalQA)
+│   ├── gradio_app.py             # Definición de la interfaz web con Gradio
+│   ├── document_loader.py        # Carga de documentos PDF y CSV
+│   ├── vector_store.py           # Creación, persistencia y carga del índice FAISS
+│   ├── config.py                 # Configuración centralizada vía variables de entorno
+│   └── secrets_manager.py        # Integración con OCI Vault para gestión de secretos
+│
+├── data/                         # Documentos fuente para base de conocimiento
+│   └── documento.pdf             # Documento de onboarding principal (carga manual)
+│
+├── storage/                      # Índice vectorial persistido en disco (generado en runtime)
+│   └── vector_index/
+│       └── documento/            # Carpeta del índice FAISS para el documento activo
+│
+├── deploy/                       # Artefactos de despliegue en OCI
+│   ├── install.sh                # Script de instalación: venv, dependencias y servicio systemd
+│   └── challenge-ai-agent.service # Unidad systemd para ejecutar la app como servicio
+│
+├── screenshots/                  # Capturas de la aplicación desplegada y funcionando en la nube 
+│
+├── requirements.txt              # Dependencias Python necesarias para el proyecto
+├── .env.ejemplo                  # Plantilla de variables de entorno (copiar a .env)
+├── .env                          # Variables de entorno activas
+├── .gitignore                    # Archivos excluidos del control de versiones
+├── LICENSE                       # Licencia MIT
+└── README.md                     # Documentación principal del proyecto
+```
+
+### 📋 Descripción de los módulos principales
+
+| Módulo | Responsabilidad |
+|---|---|
+| `main.py` | Punto de entrada. Expone la interfaz Gradio en `0.0.0.0:7860`. |
+| `agente.py` | Ensambla el pipeline RAG: resolución de rutas, carga de documentos, vector store y LLM. |
+| `gradio_app.py` | Define la UI conversacional, maneja el historial de chat y delega al agente. |
+| `document_loader.py` | Abstrae la carga de PDF (PyPDF) y CSV (pandas) en documentos LangChain. |
+| `vector_store.py` | Gestiona el ciclo de vida del índice FAISS: chunking, embeddings, persistencia y carga. |
+| `config.py` | Centraliza toda la configuración mediante variables de entorno con valores por defecto. |
+| `secrets_manager.py` | Recupera secretos desde OCI Vault usando Instance Principals, con fallback a `~/.oci/config`. |
+
 
 ## 🧑‍💻Tecnologías y herramientas
 
@@ -124,7 +172,7 @@ Inicio
 
 
 
-## 🚧 Instrucciones de instalación y ejecución
+## ⌨️ Instrucciones de instalación y ejecución
 
 ### Requisitos previos
 
@@ -143,7 +191,7 @@ cd challenge-ai-agent
 
 ```bash
 python3.12 -m venv venv
-source venv/bin/activate        # Windows: venv\\Scripts\\activate
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
@@ -157,10 +205,10 @@ cp .env.ejemplo .env
 Editá `.env` y completá los valores:
 
 ```env
-GROQ\_API\_KEY=gsk\_xxxxxxxxxxxxxxxxxxxx # Completá con tu API Key generado en tu cuenta de Groq
-GROQ\_MODEL=llama-3.3-70b-versatile
-EMBEDDING\_MODEL=sentence-transformers/all-MiniLM-L6-v2
-CHUNK\_SIZE=1000
+GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxx # Completá con tu API Key generado en tu cuenta de Groq
+GROQ_MODEL=llama-3.3-70b-versatile
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+CHUNK_SIZE=1000
 ```
 
 ### 4\. Ejecutar la aplicación
@@ -220,23 +268,23 @@ Crear `/etc/nginx/conf.d/gradio.conf`:
 ```nginx
 server {
     listen 80;
-    server\_name \_;
+    server_name _;
 
     location / {
-        proxy\_pass         http://127.0.0.1:7860;
-        proxy\_http\_version 1.1;
+        proxy_pass         http://127.0.0.1:7860;
+        proxy_http_version 1.1;
         # Necesario para WebSockets — Gradio los usa intensivamente para el chat en tiempo real
-        proxy\_set\_header   Upgrade $http\_upgrade;
-        proxy\_set\_header   Connection "upgrade";
-        proxy\_set\_header   Host            $host;
-        proxy\_set\_header   X-Real-IP       $remote\_addr;
-        proxy\_read\_timeout 300s;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection "upgrade";
+        proxy_set_header   Host            $host;
+        proxy_set_header   X-Real-IP       $remote_addr;
+        proxy_read_timeout 300s;
     }
 }
 ```
 
 ```bash
-sudo nginx -t \&\& sudo systemctl reload nginx
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
 ### 5\. Abrir el puerto en el firewall y la Security List de OCI
@@ -321,7 +369,7 @@ Las siguientes preguntas son representativas de lo que el agente puede responder
 
 ---
 
-\*\*Nota:\*\* Las respuestas anteriores son ejemplos ilustrativos. El contenido exacto dependerá del documento `data/documento.pdf` configurado en el proyecto.
+**Nota:** Las respuestas anteriores son ejemplos ilustrativos. El contenido exacto dependerá del documento `data/documento.pdf` configurado en el proyecto.
 
 ---
 
